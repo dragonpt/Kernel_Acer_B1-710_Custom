@@ -5,7 +5,7 @@ curcfg=".config"
 release="n"
 rebuild="n"
 clean="n"
-makeflags="-w"
+makeflags="-w -j8"
 makedefs="V=0"
 makejobs=${MAKEJOBS}
 curdir=`pwd`
