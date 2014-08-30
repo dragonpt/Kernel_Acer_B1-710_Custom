@@ -9,10 +9,11 @@ makeflags="-w -j8"
 makedefs="V=0"
 makejobs=${MAKEJOBS}
 curdir=`pwd`
-if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ];then
-  outdir=$curdir/out
-  mkdir -p $outdir
-fi
+TOOLCHAIN="./toolchain/arm-linux-androideabi-4.6/bin"
+#if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ];then
+#  outdir=$curdir/out
+#  mkdir -p $outdir
+#fi
 
 usage() {
     echo "Usage: $0 {release|rebuild|clean|silent|verbose|single} [config-xxx]"
@@ -61,9 +62,9 @@ done
 
 source ../mediatek/build/shell.sh ../ kernel
 defcfg="${MTK_ROOT_GEN_CONFIG}/kconfig"
-if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
-  makeflags+=" O=$outdir"
-fi
+#if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
+#  makeflags+=" O=$outdir"
+#fi
 
 if [ ! -z $KMOD_PATH ]; then
   if [ ! -e $KMOD_PATH ]; then
@@ -77,11 +78,11 @@ fi
 if [ "${clean}" == "y" ]; then
    if [ ! -z $KMOD_PATH ]; then
       echo "Clean kernel module PROJECT=$MTK_PROJECT PATH=$KMOD_PATH";
-      if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
-        make M="$KMOD_PATH" O=$outdir clean
-      else
+      #if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
+      #  make M="$KMOD_PATH" O=$outdir clean
+      #else
         make M="$KMOD_PATH" clean
-      fi
+      #fi
       exit $?
    else
       make_clean; exit $?;
@@ -96,11 +97,11 @@ if [ "${rebuild}" == "y" ]; then make_clean; fi
 
 echo "**** Configuring / $defcfg / ****"
 # select correct configuration file
-if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
-  make mediatek-configs O=$outdir
-else
+#if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
+#  make mediatek-configs O=$outdir
+#else
   make mediatek-configs
-fi
+#fi
 
 # Config DRAM size according to central Project Configuration file setting
 # Todo:
