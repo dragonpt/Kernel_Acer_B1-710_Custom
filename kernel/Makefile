@@ -4,6 +4,10 @@ SUBLEVEL = 0
 EXTRAVERSION =
 NAME = Saber-toothed Squirrel
 
+#superdragonpt for Acer B1-710
+#Temp hack for mtk modules built with debug by default
+export TARGET_BUILD_VARIANT = user
+
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
 # More info can be located in ./README
