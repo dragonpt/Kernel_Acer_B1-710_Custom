@@ -155,38 +155,52 @@ nice make ${makeflags} ${makedefs} silentoldconfig
 
 if [ ! -z $KMOD_PATH ]; then
   echo "Build kernel module PROJECT=$MTK_PROJECT PATH=$KMOD_PATH";
-  if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
-    make M="$KMOD_PATH" O=$outdir modules
-  else
+  #if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
+  #  make M="$KMOD_PATH" O=$outdir modules
+  #else
     make M="$KMOD_PATH" modules
-  fi
+  #fi
   exit $?
 fi
 
-echo "**** Building ****"
+echo "**** Building kernel ****"
 make ${makeflags} ${makejobs} ${makedefs}
 
 if [ $? -ne 0 ]; then exit 1; fi
 
-echo "**** Successfully built kernel ****"
-
 mkimg="${MTK_ROOT_BUILD}/tools/mkimage"
-if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
-  kernel_img="${outdir}/arch/arm/boot/Image"
-  kernel_zimg="${outdir}/arch/arm/boot/zImage"
-else
-kernel_img="${curdir}/arch/arm/boot/Image"
-kernel_zimg="${curdir}/arch/arm/boot/zImage"
-fi
-
-echo "**** Generate download images ****"
+#if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
+#  kernel_img="arch/arm/boot/Image"
+#  kernel_zimg="arch/arm/boot/zImage"
+#else
+kernel_img="arch/arm/boot/Image"
+kernel_zimg="arch/arm/boot/zImage"
+#fi
 
 if [ ! -x ${mkimg} ]; then chmod a+x ${mkimg}; fi
 
-if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
-  ${mkimg} ${kernel_zimg} KERNEL > out/kernel_${MTK_PROJECT}.bin
-else
-  ${mkimg} ${kernel_zimg} KERNEL > kernel_${MTK_PROJECT}.bin
-fi
+${mkimg} ${kernel_zimg} KERNEL > kernelFile
+echo "**** Successfully built kernel ****"
 
-copy_to_legacy_download_flash_folder   kernel_${MTK_PROJECT}.bin rootfs_${MTK_PROJECT}.bin
+echo "**** Copying kernel to /build_result/kernel/ ****"
+mkdir -p ../build_result/kernel/
+cp kernelFile ../build_result/kernel/kernel
+
+echo "**** Copying all built modules (.ko) to /build_result/modules/ ****"
+mkdir -p ../build_result/modules/
+for file in $(find ../ -name *.ko); do
+ cp $file ../build_result/modules/
+done
+
+echo "**** Patching all built modules (.ko) in /build_result/modules/ ****"
+cd ..
+find ./build_result/modules/ -type f -name '*.ko' | xargs -n 1 $TOOLCHAIN/arm-linux-androideabi-strip --strip-unneeded
+
+echo "####                          Finnish                                            ####"
+echo ""
+
+echo "####  You can find the zImage in the root folder: /build_result/kernel/          ####"
+echo "####  You can find all kernel modules in the root folder: /build_result/modules/ ####"
+echo ""
+echo "####       Repack the zImage with the stock RamDisk, and your done               ####"
+
