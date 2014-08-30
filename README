@@ -1,0 +1,27 @@
+This is the kernel Source code for the Acer Iconia Tablet B1-710 (MT8317T)
+Linux 3.4.0
+
+
+Building the Kernel:
+********************
+cd to kernel dir
+********************
+
+- Run script "./build.sh acer17_tb_wifi_only_jb" to begin with the build process.
+
+  Once finished, you will find:
+  - the new kernel file in the root folder ./build_result/kernel/kernel
+  - the compiled modules in the root folder ./build_result/modules/*.ko
+- Rename the "kernelFile" to "zImage" and repack with stock RamDisk
+ 
+- To perform a clean build run command "./build.sh clean acer17_tb_wifi_only_jb".
+
+
+Visit official thread at XDA:
+
+
+Have funn :)
+
+superdragonpt
+
+
